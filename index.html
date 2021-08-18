@@ -1,0 +1,267 @@
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Discord JS Documentation</title>
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+	<nav id="navbar">
+		<header>Discord JS Guide</header>
+		<ul>
+			<li><a href="#Getting_your_bot_up_&_running" class="nav-link">Getting your bot up & running</a></li>
+			<li><a href="#Creating_the_bot_file" class="nav-link">Creating the bot file</a></li>
+			<li><a href="#Logging_in_to_Discord" class="nav-link">Logging in to Discord</a></li>
+			<li><a href="#Start-up_code_explained" class="nav-link">Start-up code explained</a></li>
+			<li><a href="#Listening_for_interactions" class="nav-link">Listening for interactions</a></li>
+			<li><a href="#Configuration_files" class="nav-link">Configuration files</a></li>
+			<li><a href="#Implementing_your_config_file" class="nav-link">Implementing your config file</a></li>
+			<li><a href="#Storing_additional_data" class="nav-link">Storing additional data</a></li>
+			<li><a href="#Adding_more_commands" class="nav-link">Adding more commands</a></li>
+			<li><a href="#Simple_command_structure" class="nav-link">Simple command structure</a></li>
+			<li><a href="#Displaying_real_data" class="nav-link">Displaying real data</a></li>
+			<li><a href="#Server_info_command" class="nav-link">Server info command</a></li>
+			<li><a href="#User_info_command" class="nav-link">User info command</a></li>
+			<li><a href="#The_problem_with_if/else_if" class="nav-link">The problem with if/else if</a></li>
+		</ul>
+	</nav>
+	<main id="main-doc">
+		<section class="main-section" id="Getting_your_bot_up_&_running">
+			<header>Getting your bot up & running</header>
+			<p>We're finally getting to the exciting parts! Since your bot is in your server now, the next step is to start coding and get it online!</p>
+		</section>
+		<section class="main-section" id="Creating_the_bot_file">
+			<header >Creating the bot file</header>
+			<p>Open up your preferred code editor (whether it be Visual Studio Code, Atom, Sublime Text, or any other editor of your choice) and create a new file. If you're brand new and aren't sure what to use, go with Visual Studio Code.</p>
+			<p>We suggest that you save the file as index.js, but you may name it whatever you wish, as long as it ends with .js.</p>
+			<div class="tip">
+				<h5>TIP</h5>
+				<p>You can quickly create a new file using the <code>Ctrl + N</code> shortcut on your keyboard and then using <code>Ctrl + S</code> to save the file.</p>
+			</div>
+		</section>
+		<section class="main-section" id="Logging_in_to_Discord">
+			<header >Logging in to Discord</header>
+			<p>Once you've created a new file, do a quick check to see if you have everything setup correctly. Copy & paste the following code into your file and save it. Don't worry if you don't understand it right away—we explain more in-depth after this.</p>
+			<code><pre>
+	const { Client, Intents } = require('discord.js');
+
+	const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
+
+	client.once('ready', () => {
+		console.log('Ready!');
+	});
+
+	client.login('your-token-goes-here');</pre></code>
+			<p>Head back to your console window, type in node your-file-name.js, and press enter. If you see the Ready! message after a few seconds, you're good to go! If not, try going back a few steps and make sure you followed everything correctly.</p>
+			<div class="tip">
+				<h5>TIP</h5>
+				<p>Don't feel like typing the file name each time? Open up your <code>package.json</code> file, look for something like <code>"main": "index.js"</code> and change <code>"index.js"</code> to whatever your file name is. After saving, you can run the <code>node .</code> shortcut in your console to start the process!</p>
+			</div>
+		</section>
+		<section class="main-section" id="Start-up_code_explained">
+			<header >Start-up code explained</header>
+			<p>Here's the same code with comments, so it's easier to understand what's going on.</p>
+			<code><pre>
+	// require the needed discord.js classes
+	const { Client, Intents } = require('discord.js');
+
+	// create a new Discord client
+	const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
+
+	// when the client is ready, run this code
+	// this event will only trigger one time after logging in
+	client.once('ready', () => {
+		console.log('Ready!');
+	});
+
+	// login to Discord with your app's token
+	client.login('your-token-goes-here');</pre></code>
+			<p>Although it's not a lot, it's good to know what each bit of your code does. But, as it currently is, this won't do anything. You probably want to add some commands that run whenever someone sends a specific message, right? Let's get started on that, then!</p>
+		</section>
+		<section class="main-section" id="Listening_for_interactions">
+			<header>Listening for interactions</header>
+			<p>First, make sure to close the process in your console. You can do so by pressing Ctrl + C inside the console. Go back to your code editor and add the following piece of code above the client.login() line.</p>
+			<code><pre>
+	client.on('interactionCreate', interaction => {
+	console.log(interaction);
+	});</pre></code>
+			<p>Notice how the code uses .on rather than .once like in the ready event. This means that it can trigger multiple times. Save the file, go back to your console, and start the process up again. Whenever an interaction is received, the console will log it. Go ahead and test it out!</p>
+			<div class="tip">
+				<h5>TIP</h5>
+				<p>Inside your console, you can press the up arrow on your keyboard to bring up the latest commands you've run. Pressing Up and then Enter after closing the process is a convenient, quick way to start it up again (instead of typing out the name each time).</p>
+			</div>
+			<div class="tip">
+				<h5>TIP</h5>
+				<p>To learn how to create and receive slash commands, read through the interactions section.</p>
+			</div>
+		</section>
+		<section class="main-section" id="Configuration_files">
+			<header>Configuration files</header>
+			<p>As you get deeper into development, you may need to interact with sensitive data or data that gets used in multiple locations, such as:</p>
+			<ul>
+				<li>Database passwords</li>
+				<li>API keys</li>
+				<li>A list of bot owner IDs</li>
+			</ul>
+			<p>Having that kind of data hard-coded in each of your files can be bothersome and less than ideal. This is where configuration files come in–they're great for storing static data you can easily update in a single place.</p>
+		</section>
+		<section class="main-section" id="Implementing_your_config_file">
+			<header>Implementing your config file</header>
+			<p>Go to your code editor and make a new file. Add in the code below and save it as config.json, in the same directory as your main bot file.</p>
+			<code><pre>
+	{
+	"token": "your-token-goes-here"
+	}</pre></code>
+			<p>Go back to your main bot file, locate the <code>const client = new Client()</code> line, and add this above it:</p>
+			<code><pre>
+	const { token } = require('./config.json');</pre></code>
+			<p>Next, copy your token from the <code>client.login('your-token-goes-here')</code> line and paste into the <code>config.json</code> file. Make sure to keep it between the double-quotes.</p>
+			<p>Now you can simply do <code>client.login(token)</code> to login!</p>
+		</section>
+		<section class="main-section" id="Storing_additional_data">
+			<header>Storing additional data</header>
+			<p>As previously mentioned, you'll probably want to store more than just your token at one point or another. If you're going to store more data, add another key/value pair to the list!</p>
+			<code><pre>
+	{
+		"token": "your-token-goes-here",
+		"meaning_of_life": 42,
+		"passwords_array": ["please", "dont", "hack", "me"],
+		"secret_passcodes": {
+			"bank": 1234,
+			"home": 4321
+		}
+	}</pre></code>
+		</section>
+		<section class="main-section" id="Adding_more_commands">
+			<header>Adding more commands</header>
+			<div class="tip">
+				<h5>TIP</h5>
+				<p>This page is a follow-up and bases its code on the previous page and assumes that you have read the interactions section and are familiar with its usage.</p>
+			</div>
+			<p>A bot with nothing but a single command would be boring, and you probably have a bunch of command ideas floating around in your head already, right? Let's begin, then.</p>
+			<p>Here's what your interaction event should currently look like:</p>
+			<code><pre>
+	client.on('interactionCreate', async interaction => {
+		if (!interaction.isCommand()) return;
+
+		if (interaction.commandName === 'ping') {
+			await interaction.reply('Pong!');
+		}
+	});</pre></code>
+			<p>Before doing anything else, make a property to store the token. Instead of <code>const config = ...</code>, you can destructure the config file to extract the token variable.</p>
+			<code><pre>
+	const { token } = require('./config.json');
+	// ...
+	client.login(token);</pre></code>
+			<p>From now on, if you change the token in your config.json file, it'll change in your bot file as well.</p>
+			<div class="tip">
+				<h5>TIP</h5>
+				<p>If you aren't familiar with some of this syntax, it may be ES6 syntax. If it does confuse you, you should check out this guide page before continuing.</p>
+			</div>
+		</section>
+		<section class="main-section" id="Simple_command_structure">
+			<header>Simple command structure</header>
+			<p>You already have an if statement that checks messages for a ping/pong command. Adding other command checks is just as easy; chain an <code>else if</code> to your existing condition. Instead of using <code>interaction.commandName</code> every time, you can destructure it as shown here.</p>
+			<code><pre>
+	client.on('interactionCreate', async interaction => {
+		if (!interaction.isCommand()) return;
+
+		const { commandName } = interaction;
+
+		if (commandName === 'ping') {
+			await interaction.reply('Pong!');
+		} else if (commandName === 'beep') {
+			await interaction.reply('Boop!');
+		}
+	});</pre></code>
+		</section>
+		<section class="main-section" id="Displaying_real_data">
+			<header>Displaying real data</header>
+			<p>Let's start displaying some real data. For now, we'll be displaying basic member/server info.</p>
+		</section>
+		<section class="main-section" id="Server_info_command">
+			<header>Server info command</header>
+			<p>Make another if statement to check for commands using <code>server</code> as the command name. You get the interaction object and reply to the interaction just as before:</p>
+			<div class="tip">
+				<h5>TIP</h5>
+				<p>Servers are referred to as "guilds" in the Discord API and discord.js library. Whenever you see someone say "guild", they mean server.</p>
+			</div>
+			<code><pre>
+	client.on('interactionCreate', async interaction => {
+		if (!interaction.isCommand()) return;
+
+		const { commandName } = interaction;
+
+		if (commandName === 'ping') {
+			await interaction.reply('Pong!');
+		} else if (commandName === 'beep') {
+			await interaction.reply('Boop!');
+		} else if (commandName === 'server') {
+			await interaction.reply(`This server's name is: ${interaction.guild.name}`);
+		}
+	});</pre></code>
+			<p>If you want to expand upon that command and add some more info, here's an example of what you can do:</p>
+			<code><pre>
+	client.on('interactionCreate', async interaction => {
+		if (!interaction.isCommand()) return;
+
+		const { commandName } = interaction;
+
+		if (commandName === 'ping') {
+			await interaction.reply('Pong!');
+		} else if (commandName === 'beep') {
+			await interaction.reply('Boop!');
+		} else if (commandName === 'server') {
+			await interaction.reply(`Server name: ${interaction.guild.name}\nTotal members: ${interaction.guild.memberCount}`);
+		}
+	});</pre></code>		
+			<p>Of course, you can modify this to your liking. You may also want to display the date the server was created or the server's verification level. You would do those in the same manner–use <code>interaction.guild.createdAt</code> or <code>interaction.guild.verificationLevel</code>, respectively.</p>
+			<div class="tip">
+				<h5>TIP</h5>
+				<p>Refer to the Guild documentation for a list of all the properties you can access and all the methods you can call on a server!</p>
+			</div>	
+		</section>
+		<section class="main-section" id="User_info_command">
+			<header>User info command</header>
+			<p>Set up another if statement and use the command name <code>user-info</code>.</p>
+			<code><pre>
+	client.on('interactionCreate', async interaction => {
+		if (!interaction.isCommand()) return;
+
+		const { commandName } = interaction;
+
+		if (commandName === 'ping') {
+			await interaction.reply('Pong!');
+		} else if (commandName === 'beep') {
+			await interaction.reply('Boop!');
+		} else if (commandName === 'server') {
+			await interaction.reply(`This server's name is: ${interaction.guild.name}`);
+		} else if (commandName === 'user-info') {
+			await interaction.reply(`Your username: ${interaction.user.username}\nYour ID: ${interaction.user.id}`);
+		}
+	});</pre></code>
+			<div class="tip">
+				<h5>TIP</h5>
+				<p><code>interaction.user</code> refers to the user who sent the command. Check out the User documentation page for a full list of all the properties and methods for the user object.</p>
+			</div>
+			<p>And there you have it! As you can see, it's quite simple to add additional commands.</p>
+		</section>
+		<section class="main-section" id="The_problem_with_if/else_if">
+			<header>The problem with if/else if</header>
+			<p>If you don't plan to make more than seven or eight commands for your bot, then using an if/else if chain is sufficient; it's presumably a small project at that point, so you shouldn't need to spend too much time on it. However, this isn't the case for most of us.</p>
+			<p>You probably want your bot to be feature-rich and easy to configure and develop, right? Using a giant if/else if chain won't let you achieve that; it will only hinder your development process. Next, we'll be diving right into something called a "command handler" - code that makes handling commands easier and much more efficient.</p>
+			<p>Before continuing, here's a small list of reasons why you shouldn't use if/else if chains for anything that's not a small project:</p>
+			<ul>
+				<li>Takes longer to find  a piece of code you want.</li>
+				<li>Easier to fall victim to spaghetti code</li>
+				<li>Difficult to maintain as it grows.</li>
+				<li>Difficult to debug.</li>
+				<li>Difficult to organize.</li>
+				<li>General bad practice.</li>
+			</ul>
+			<p>In short, it's just not a good idea. But that's why this guide exists! Go ahead and read the next few pages to prevent these issues before they happen, learning new things along the way.</p>
+		</section>
+	</main>
+	<script src="https://cdn.freecodecamp.org/testable-projects-fcc/v1/bundle.js"></script>
+</body>
+</html>
